@@ -1,4 +1,4 @@
-package org.fanlychie.springboot3.part1.quickstart;
+package org.fanlychie.springboot3.part1;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
