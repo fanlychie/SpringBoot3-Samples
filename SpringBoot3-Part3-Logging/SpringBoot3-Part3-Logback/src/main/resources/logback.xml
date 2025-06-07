@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--debug="true"启用logback状态数据,会在控制台输出logback运行信息-->
+<!--scan="true"启用修改时自动重新加载配置文件-->
+<!--scanPeriod默认每分钟扫描一次,此项可以设置毫秒、秒、分钟或小时为单位指定-->
+<configuration debug="false" scan="true" scanPeriod="3 seconds">
+
+    <!--定义变量-->
+    <!--value:直接给定变量的值-->
+    <!--file="src/main/resources/variables1.properties"可以使用文件导入属性值配置-->
+    <!--resource="variables1.properties"类路径也可以直接用此项设置-->
+    <variable name="LOG_HOME" value="C:/Log"/>
+    <variable name="APP_NAME" value="SpringBoot3-Part3-Logging"/>
+    <!--定义时间戳变量-->
+    <timestamp key="timestamp" datePattern="yyyyMMdd'T'HHmmssSSS"/>
+
+    <!--appender:用来配置日志输出的目的地-->
+    <!--输出到控制台-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%-15thread] %logger{50}#%line -- %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!--输出到单个文件-->
+    <appender name="SINGLE_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_HOME}/${APP_NAME}.${timestamp}.log</file> <!--使用时间戳每次启动都生成新的文件,如果目录不存在则会自动创建-->
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%-15thread] %logger{50}#%line -- %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!--输出到滚动文件-->
+    <appender name="ROLLING_TIME_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/${APP_NAME}.TIME.log</file>
+        <!--滚动策略:TimeBasedRollingPolicy基于时间的滚动策略, 例如按天、按月-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--文件名模式, 使用%d转换符, 遵循java.text.SimpleDateFormat模式-->
+            <!--%d:默认模式为yyyy-MM-dd, 即按天滚动-->
+            <!--%d{yyyy-MM-dd_HH}:即按小时滚动-->
+            <fileNamePattern>${LOG_HOME}/${APP_NAME}.TIME.%d{yyyy-MM-dd_HH}.log</fileNamePattern>
+            <!--保留最近历史文件的最大数量, 超出这个阈值的最旧文件会被异步删除-->
+            <maxHistory>48</maxHistory>
+            <!--文件（所有文件包括历史文件）的总大小, 当超过总大小上限时, 将异步删除最旧的文件-->
+            <totalSizeCap>5GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%-15thread] %logger{50}#%line -- %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!--输出到滚动文件-->
+    <appender name="ROLLING_SIZE_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/${APP_NAME}.SIZE.log</file>
+        <!--滚动策略:SizeAndTimeBasedRollingPolicy基于大小和时间的滚动策略, 该策略基于TimeBasedRollingPolicy扩展了maxFileSize属性-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!--%d:默认模式为yyyy-MM-dd, 即按天滚动-->
+            <!--SizeAndTimeBasedRollingPolicy基于大小和时间的滚动策略的%i和%d转换符都是必需使用的-->
+            <fileNamePattern>${LOG_HOME}/${APP_NAME}.SIZE.%d.%i.log</fileNamePattern>
+            <!--每个文件最大为100MB, 保留30天的历史记录, 但最多为10GB-->
+            <!--每个文件最大为100MB-->
+            <maxFileSize>100MB</maxFileSize>
+            <!--保留30天的历史记录-->
+            <maxHistory>30</maxHistory>
+            <!--所有文件（包括历史文件）的总大小最多为10G-->
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%-15thread] %logger{50}#%line -- %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!--level:日志级别TRACE, DEBUG, INFO, WARN, ERROR-->
+    <!--继承root根的level级别-->
+    <logger name="org.fanlychie.springboot3.part3"/>
+    <!--只输出到ROLLING_SIZE_FILE, 日志的级别设置成DEBUG-->
+    <!--additivity="false":表示日志不向父节点传递只记录到当前节点, 比如controller的日志不会输出到
+    org.fanlychie.springboot3.part3包配置的目的地, 只输出到当前org.fanlychie.springboot3.part3.controller配置的目的地
+    -->
+    <logger name="org.fanlychie.springboot3.part3.controller" level="DEBUG" additivity="false">
+        <appender-ref ref="ROLLING_SIZE_FILE"/>
+    </logger>
+
+    <!--输出到控制台和和SINGLE_FILE和ROLLING_TIME_FILE, 比如上面配置的org.fanlychie.springboot3.part3-->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="SINGLE_FILE"/>
+        <appender-ref ref="ROLLING_TIME_FILE"/>
+    </root>
+
+</configuration>
