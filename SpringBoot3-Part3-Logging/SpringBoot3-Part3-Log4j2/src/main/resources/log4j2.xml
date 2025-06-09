@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--********************[Log4j 2.24 配置样例]********************-->
+
+<!--status:指定状态记录器的级别, 辅助开发者排查错误, 默认级别为ERROR-->
+<!--monitorInterval:轮询间隔(秒), 如果检测到配置发生变更则自动重新加载配置, 默认为0即禁止轮询-->
+<Configuration status="WARN" monitorInterval="5">
+
+    <!--定义属性-->
+    <Properties>
+        <!--value:直接给定变量的值-->
+        <Property name="LOG_HOME" value="C:/Log"/>
+        <!--“:-”变量的默认值, 使用定义“${变量名:-默认值}”-->
+        <Property name="APP_NAME" value="${appName:-SpringBoot3-Part3-Logging}"/>
+    </Properties>
+
+    <!--日志记录管道的出口。决定将日志发送到哪些资源，如控制台、文件-->
+    <Appenders>
+        <!--输出到控制台-->
+        <Console name="CONSOLE">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%-15thread] %logger{50}#%line -- %msg%n"/>
+        </Console>
+        <!--输出到单个文件-->
+        <File name="FILE" fileName="${LOG_HOME}/${APP_NAME}.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%-15thread] %logger{50}#%line -- %msg%n"/>
+        </File>
+        <!--输出到滚动文件-->
+        <RollingRandomAccessFile name="ROLLING_FILE"
+                                 fileName="${LOG_HOME}/${APP_NAME}.ROLLING.log"
+                                 filePattern="${LOG_HOME}/${APP_NAME}.ROLLING.%d{yyyy-MM-dd_HH}.%i.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%-15thread] %logger{50}#%line -- %msg%n"/>
+            <!--触发策略-->
+            <Policies>
+                <!--启动时触发, 如果日志文件是在JVM启动前创建的, 并且达到或超过最小文件大小, 则会触发翻转-->
+                <!--minSize:文件滚动的最小大小, 默认就是1, 可以不显示配置-->
+                <OnStartupTriggeringPolicy minSize="1"/>
+                <!--基于大小的触发策略, 在文件达到指定大小后会导致翻转, 单位可以是K、KB、M、MB、G、GB、T、TB-->
+                <!--注意:当与基于时间触发策略结合使用时, filePattern应包含一个%i转换模式, 否则文件在每次翻转时将被覆盖-->
+                <!--size:当前日志文件的最大大小, 一旦达到此大小, 将发生翻转-->
+                <SizeBasedTriggeringPolicy size="20M"/>
+                <!--基于时间的触发策略, 当filePattern中的最小时间单位的值发生变更时, 将发生翻转, 比如周、天、小时结束等-->
+                <!--注意:这要求filePattern应包含一个%d{...}时间, 否则文件在每次翻转时将被覆盖-->
+                <!--interval:根据%d{...}模式中最小的时间单位, 应多久发生一次翻转, 默认就是1, 可以不显示配置-->
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+            <!--滚动策略-->
+            <!--min:%i转化模式的最小值, 默认是1-->
+            <!--max:%i转换模式的最大值, 默认是7-->
+            <DefaultRolloverStrategy min="1" max="24"/>
+        </RollingRandomAccessFile>
+    </Appenders>
+
+    <!--日志记录器配置-->
+    <!--日志记录管道的入口。配置指定日志的级别和发送到哪些Appender-->
+    <Loggers>
+        <!--level:日志级别OFF、FATAL、ERROR、WARN、INFO、DEBUG、TRACE、ALL-->
+        <!--根层级, 没有明确配置使用哪个记录器的日志都使用这个记录器-->
+        <Root level="INFO">
+            <AppenderRef ref="CONSOLE"/>
+        </Root>
+        <!--继承Root根层级的level级别-->
+        <Logger name="org.fanlychie.springboot3.part3">
+            <AppenderRef ref="FILE"/>
+        </Logger>
+        <!--只输出到ROLLING_FILE, 日志的级别设置成DEBUG-->
+        <!--additivity="false":表示日志不向父节点传递只记录到当前节点, 比如controller的日志不会输出到
+        org.fanlychie.springboot3.part3包配置的目的地, 只输出到当前org.fanlychie.springboot3.part3.controller配置的目的地
+        -->
+        <Logger name="org.fanlychie.springboot3.part3.controller" level="DEBUG" additivity="false">
+            <AppenderRef ref="ROLLING_FILE"/>
+        </Logger>
+    </Loggers>
+
+</Configuration>
