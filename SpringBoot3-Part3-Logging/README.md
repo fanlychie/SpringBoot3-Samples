@@ -4,5 +4,5 @@
 | 演示样例项目名称                                             | 样例描述                               |
 | ------------------------------------------------------------ | -------------------------------------- |
 | [SpringBoot3-Part3-Logback](https://github.com/fanlychie/SpringBoot3-Samples/tree/master/SpringBoot3-Part3-Logging/SpringBoot3-Part3-Logback) | Spring Boot 3.x + Logback 1.5 使用样例 |
-|                                                              |                                        |
+| [SpringBoot3-Part3-Log4j2](https://github.com/fanlychie/SpringBoot3-Samples/tree/master/SpringBoot3-Part3-Logging/SpringBoot3-Part3-Log4j2) | Spring Boot 3.x + Log4j 2.24 使用样例 |
 
