@@ -11,7 +11,7 @@
 
 ## Logback 1.5
 
-Logback中三大类型的组件Logger、Appender、Layout。Logger是日志的记录器，Appender是日志输出的目的地，Layout是用户自定义日志的格式。
+[Logback](https://logback.qos.ch/manual/introduction.html)中三大类型的组件Logger、Appender、Layout。Logger是日志的记录器，Appender是日志输出的目的地，Layout是用户自定义日志的格式。
 
 1、**Logger**可以通过`LoggerFactory.getLogger()`静态方法获取；
 

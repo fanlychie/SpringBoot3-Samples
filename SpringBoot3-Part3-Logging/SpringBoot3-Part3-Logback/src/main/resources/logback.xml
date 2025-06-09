@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!--********************[Logback 1.5 配置样例]********************-->
+
 <!--debug="true"启用logback状态数据,会在控制台输出logback运行信息-->
 <!--scan="true"启用修改时自动重新加载配置文件-->
 <!--scanPeriod默认每分钟扫描一次,此项可以设置毫秒、秒、分钟或小时为单位指定-->
@@ -10,7 +12,8 @@
     <!--file="src/main/resources/variables1.properties"可以使用文件导入属性值配置-->
     <!--resource="variables1.properties"类路径也可以直接用此项设置-->
     <variable name="LOG_HOME" value="C:/Log"/>
-    <variable name="APP_NAME" value="SpringBoot3-Part3-Logging"/>
+    <!--“:-”变量的默认值, 使用定义“${变量名:-默认值}”-->
+    <variable name="APP_NAME" value="${appName:-SpringBoot3-Part3-Logging}"/>
     <!--定义时间戳变量-->
     <timestamp key="timestamp" datePattern="yyyyMMdd'T'HHmmssSSS"/>
 
